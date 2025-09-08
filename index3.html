@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EcoTrace – E-Waste Facility Locator</title>
+  <style>
+    /* --- Base Styles --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { background: #e8f5e9; color: #2e7d32; line-height: 1.6; }
+    a { text-decoration: none; color: inherit; }
+    h1, h2, h3 { font-weight: 600; }
+
+    /* --- Navbar --- */
+    header { background: #2e7d32; color: #fff; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
+    .logo { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: .5rem; }
+    nav ul { list-style: none; display: flex; gap: 1.5rem; }
+    nav li { cursor: pointer; }
+    .hamburger { display: none; font-size: 1.5rem; cursor: pointer; }
+
+    /* --- Landing Page --- */
+    .hero { text-align: center; padding: 4rem 1rem; }
+    .hero h1 { font-size: 2.5rem; margin-bottom: .5rem; }
+    .tagline { font-size: 1.2rem; margin-bottom: 1.5rem; color: #388e3c; }
+    .btn { background: #81c784; padding: .75rem 1.5rem; border: none; border-radius: 25px; cursor: pointer; font-size: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.2); transition: 0.3s; }
+    .btn:hover { background: #66bb6a; transform: translateY(-2px); }
+
+    /* --- Info Section --- */
+    .info { display: grid; gap: 1.5rem; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    .card { background: white; padding: 1.5rem; border-radius: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .card h3 { margin-bottom: .5rem; }
+
+    /* --- Facility Locator --- */
+    .search-section { padding: 2rem 1rem; text-align: center; }
+    .search-bar { padding: .75rem; width: 60%; max-width: 400px; border: 1px solid #ccc; border-radius: 25px; }
+    .results { display: grid; gap: 1rem; padding: 2rem 1rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .facility-card { background: #fff; padding: 1rem; border-radius: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .facility-card h4 { margin-bottom: .5rem; }
+    .map-container { height: 400px; margin: 2rem auto; max-width: 900px; border-radius: 15px; overflow: hidden; }
+
+    /* --- Footer --- */
+    footer { background: #2e7d32; color: white; text-align: center; padding: 1rem; margin-top: 2rem; border-top-left-radius: 20px; border-top-right-radius: 20px; }
+
+    /* --- Mobile --- */
+    @media(max-width: 768px) {
+      nav ul { display: none; flex-direction: column; background: #2e7d32; position: absolute; top: 60px; right: 20px; padding: 1rem; border-radius: 10px; }
+      nav ul.active { display: flex; }
+      .hamburger { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <header>
+    <div class="logo">♻️ EcoTrace</div>
+    <nav>
+      <div class="hamburger">☰</div>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#locator">Find Facility</a></li>
+        <li><a href="#awareness">Awareness</a></li>
+        <li><a href="#admin">Admin</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>EcoTrace</h1>
+    <p class="tagline">Locate. Recycle. Sustain.</p>
+    <button class="btn" onclick="document.getElementById('locator').scrollIntoView({behavior:'smooth'})">Find Facility</button>
+  </section>
+
+  <!-- Info Section -->
+  <section class="info">
+    <div class="card"><h3>♻️ Why recycle e-waste?</h3><p>Reduces pollution, saves natural resources, and prevents toxic materials from harming the environment.</p></div>
+    <div class="card"><h3>📱 Did you know?</h3><p>Recycling 1 million cell phones recovers 35,000 lbs of copper and 770 lbs of silver.</p></div>
+    <div class="card"><h3>🌍 Small steps matter</h3><p>Every device you recycle helps build a greener planet for future generations.</p></div>
+  </section>
+
+  <!-- Facility Locator -->
+  <section id="locator" class="search-section">
+    <h2>Find a Recycling Facility Near You</h2>
+    <input type="text" class="search-bar" placeholder="Enter city or pincode"/>
+    <button class="btn" onclick="useLocation()">Use My Location</button>
+    <div class="results">
+      <div class="facility-card">
+        <h4>GreenTech Recycling</h4>
+        <p>123 Eco Road, Delhi</p>
+        <p>📞 +91 9876543210</p>
+        <p>Accepted: Phones, Laptops, Batteries</p>
+        <a href="https://maps.google.com" target="_blank">📍 Get Directions</a>
+      </div>
+      <div class="facility-card">
+        <h4>Recycle Hub</h4>
+        <p>45 Green Park, Mumbai</p>
+        <p>📞 +91 9123456780</p>
+        <p>Accepted: TVs, Appliances, E-waste</p>
+        <a href="https://maps.google.com" target="_blank">📍 Get Directions</a>
+      </div>
+    </div>
+    <div id="map" class="map-container"></div>
+  </section>
+
+  <!-- Awareness -->
+  <section id="awareness" class="info">
+    <div class="card"><h3>📊 E-Waste Impact</h3><p>By 2030, global e-waste will hit 75 million tonnes. Safe recycling is critical.</p></div>
+    <div class="card"><h3>🔋 Recycle Responsibly</h3><p>Items like batteries, monitors, and old chargers should never go to landfills.</p></div>
+  </section>
+
+  <!-- Admin (Optional) -->
+  <section id="admin" class="info">
+    <div class="card">
+      <h3>🔑 Admin Login</h3>
+      <input type="text" placeholder="Username" style="width:100%;margin:0.5rem 0;padding:.5rem;border-radius:5px;border:1px solid #ccc"/>
+      <input type="password" placeholder="Password" style="width:100%;margin:0.5rem 0;padding:.5rem;border-radius:5px;border:1px solid #ccc"/>
+      <button class="btn">Login</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>EcoTrace Project – Built with ♻️ by Team Green</p>
+  </footer>
+
+  <script>
+    // Mobile Navbar Toggle
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('nav ul');
+    hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+
+    // Geolocation API
+    function useLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          alert("Latitude: " + pos.coords.latitude + " | Longitude: " + pos.coords.longitude);
+        });
+      } else {
+        alert("Geolocation not supported.");
+      }
+    }
+
+    // Basic Leaflet Map
+    window.onload = () => {
+      const script = document.createElement('script');
+      script.src = "https://unpkg.com/leaflet/dist/leaflet.js";
+      script.onload = () => {
+        const link = document.createElement('link');
+        link.rel = "stylesheet";
+        link.href = "https://unpkg.com/leaflet/dist/leaflet.css";
+        document.head.appendChild(link);
+
+        const map = L.map('map').setView([28.6139, 77.2090], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+        L.marker([28.6139, 77.2090]).addTo(map).bindPopup('Delhi Facility');
+        L.marker([19.0760, 72.8777]).addTo(map).bindPopup('Mumbai Facility');
+      };
+      document.body.appendChild(script);
+    }
+  </script>
+</body>
+</html>

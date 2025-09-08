@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrace - E-Waste Facility Locator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2e4a2e;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            min-height: 100vh;
+        }
+
+        /* Header & Navigation */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(46, 125, 50, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0 2rem;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2e7d32;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #2e7d32, #81c784);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #2e4a2e;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: #e8f5e9;
+            color: #2e7d32;
+            transform: translateY(-2px);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #2e7d32;
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        /* Main Content */
+        .main {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+        }
+
+        .section {
+            display: none;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Home Page */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: linear-gradient(135deg, rgba(232, 245, 233, 0.8), rgba(241, 248, 233, 0.8));
+            border-radius: 20px;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 40px rgba(46, 125, 50, 0.1);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            color: #2e7d32;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .hero .tagline {
+            font-size: 1.3rem;
+            color: #4a6741;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            color: white;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(46, 125, 50, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(232, 245, 233, 0.5);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(46, 125, 50, 0.15);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #2e7d32;
+        }
+
+        .card h3 {
+            color: #2e7d32;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        /* Facility Locator */
+        .search-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 30px rgba(46, 125, 50, 0.1);
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.8rem 1.2rem;
+            border: 2px solid #e8f5e9;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .search-input:focus {
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .search-button, .location-button {
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .location-button {
+            background: linear-gradient(135deg, #81c784, #a5d6a7);
+        }
+
+        .search-button:hover, .location-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+        }
+
+        .map-container {
+            height: 400px;
+            background: #e8f5e9;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2e7d32;
+            font-size: 1.1rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .facility-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid #81c784;
+        }
+
+        .facility-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(46, 125, 50, 0.15);
+        }
+
+        .facility-name {
+            color: #2e7d32;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .facility-address {
+            color: #4a6741;
+            margin-bottom: 0.5rem;
+        }
+
+        .facility-phone {
+            color: #2e7d32;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .facility-items {
+            background: #e8f5e9;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #2e4a2e;
+            margin-bottom: 1rem;
+        }
+
+        .directions-btn {
+            background: linear-gradient(135deg, #ff7043, #ff8a65);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .directions-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(255, 112, 67, 0.3);
+        }
+
+        /* Awareness Page */
+        .awareness-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .awareness-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(46, 125, 50, 0.1);
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Admin Panel */
+        .admin-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .login-form, .admin-dashboard {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(46, 125, 50, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2e4a2e;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e8f5e9;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            border-color: #2e7d32;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .admin-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #81c784, #a5d6a7);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336, #ef5350);
+            color: white;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .facility-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .facility-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #81c784;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(46, 125, 50, 0.9);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer h4 {
+            margin-bottom: 1rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 80px);
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                padding-top: 2rem;
+                transition: left 0.3s ease;
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .hamburger.active span:nth-child(1) {
+                transform: rotate(45deg) translate(5px, 5px);
+            }
+
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(7px, -6px);
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .search-input {
+                min-width: auto;
+            }
+
+            .info-cards,
+            .results-grid,
+            .awareness-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-actions {
+                justify-content: center;
+            }
+
+            .section {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 0 1rem;
+            }
+
+            .hero {
+                padding: 2rem 1rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #2e7d32;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #f44336;
+        }
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="#" class="logo" onclick="showSection('home')">
+                <div class="logo-icon">🌱</div>
+                EcoTrace
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#" class="active" onclick="showSection('home')">Home</a></li>
+                <li><a href="#" onclick="showSection('locator')">Find Facility</a></li>
+                <li><a href="#" onclick="showSection('awareness')">Awareness</a></li>
+                <li><a href="#" onclick="showSection('admin')">Admin</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Home Section -->
+        <section class="section active" id="home">
+            <div class="hero">
+                <h1>EcoTrace</h1>
+                <p class="tagline">"Locate. Recycle. Sustain."</p>
+                <button class="cta-button" onclick="showSection('locator')">Find Facility</button>
+            </div>
+
+            <div class="info-cards">
+                <div class="card">
+                    <div class="card-icon">♻️</div>
+                    <h3>Why Recycle E-Waste?</h3>
+                    <p>Electronic waste contains toxic materials like lead, mercury, and cadmium that can harm the environment and human health when improperly disposed of. Recycling e-waste recovers valuable materials and prevents pollution.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🌍</div>
+                    <h3>Environmental Impact</h3>
+                    <p>Only 20% of global e-waste is formally recycled. The rest ends up in landfills or is illegally dumped, causing soil and water contamination. Proper recycling can recover 95% of materials in electronics.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">💎</div>
+                    <h3>Valuable Resources</h3>
+                    <p>E-waste contains precious metals like gold, silver, and platinum. One ton of mobile phones contains more gold than one ton of gold ore! Recycling helps recover these valuable resources.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Facility Locator Section -->
+        <section class="section" id="locator">
+            <div class="search-container">
+                <h2 style="color: #2e7d32; margin-bottom: 1.5rem;">Find E-Waste Facilities Near You</h2>
+                <div class="search-bar">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Enter pincode or city name...">
+                    <button class="search-button" onclick="searchFacilities()">Search</button>
+                    <button class="location-button" onclick="useMyLocation()">📍 Use My Location</button>
+                </div>
+                <div id="searchStatus"></div>
+            </div>
+
+            <div class="map-container" id="mapContainer">
+                <p>🗺️ Interactive map will load here with facility locations</p>
+            </div>
+
+            <div id="searchResults" class="results-grid">
+                <!-- Results will be populated here -->
+            </div>
+        </section>
+
+        <!-- Awareness Section -->
+        <section class="section" id="awareness">
+            <h2 style="color: #2e7d32; margin-bottom: 2rem; text-align: center;">E-Waste Awareness</h2>
+            
+            <div class="awareness-grid">
+                <div class="awareness-card">
+                    <h3 style="color: #2e7d32; margin-bottom: 1rem;">🔋 Items to Recycle</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid #e8f5e9;">📱 Mobile phones & tablets</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid #e8f5e9;">💻 Computers & laptops</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid #e8f5e9;">📺 TVs & monitors</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid #e8f5e9;">🔌 Cables & chargers</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid #e8f5e9;">🖨️ Printers & scanners</li>
+                        <li style="padding: 0.5rem 0;">🎮 Gaming consoles</li>
+                    </ul>
+                </div>
+
+                <div class="awareness-card">
+                    <h3 style="color: #2e7d32; margin-bottom: 1rem;">⚠️ Hazardous Materials</h3>
+                    <p>Electronic devices contain hazardous substances that can cause serious environmental and health problems:</p>
+                    <ul style="margin-top: 1rem;">
+                        <li><strong>Lead:</strong> Damages nervous system</li>
+                        <li><strong>Mercury:</strong> Toxic to brain and kidneys</li>
+                        <li><strong>Cadmium:</strong> Causes kidney damage</li>
+                        <li><strong>Chromium:</strong> Can cause cancer</li>
+                        <li><strong>PVC plastics:</strong> Release toxic dioxins</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-number">54M</div>
+                    <p>Tons of e-waste generated globally each year</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">20%</div>
+                    <p>Of e-waste is properly recycled worldwide</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">$62B</div>
+                    <p>Worth of materials in annual e-waste</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5.3B</div>
+                    <p>Mobile phones discarded annually</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h3 style="color: #2e7d32; margin-bottom: 1rem;">📋 Before You Recycle</h3>
+                <ul>
+                    <li><strong>Backup your data:</strong> Save important files and photos</li>
+                    <li><strong>Remove personal information:</strong> Factory reset devices</li>
+                    <li><strong>Remove batteries:</strong> Take out removable batteries</li>
+                    <li><strong>Find certified recyclers:</strong> Use only authorized e-waste facilities</li>
+                    <li><strong>Get a certificate:</strong> Request proof of proper disposal</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Admin Section -->
+        <section class="section" id="admin">
+            <div class="admin-container">
+                <!-- Login Form -->
+                <div class="login-form" id="loginForm">
+                    <h2 style="color: #2e7d32; margin-bottom: 1.5rem; text-align: center;">Admin Login</h2>
+                    <div class="form-group">
+                        <label>Username:</label>
+                        <input type="text" id="adminUsername" placeholder="Enter username">
+                    </div>
+                    <div class="form-group">
+                        <label>Password:</label>
+                        <input type="password" id="adminPassword" placeholder="Enter password">
+                    </div>
+                    <button class="admin-btn btn-primary" style="width: 100%;" onclick="adminLogin()">Login</button>
+                    <div id="loginStatus"></div>
+                </div>
+
+                <!-- Admin Dashboard -->
+                <div class="admin-dashboard hidden" id="adminDashboard">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2 style="color: #2e7d32;">Admin Dashboard</h2>
+                        <button class="admin-btn btn-secondary" onclick="adminLogout()">Logout</button>
+                    </div>
+
+                    <div class="admin-actions">
+                        <button class="admin-btn btn-primary" onclick="showAddForm()">Add New Facility</button>
+                        <button class="admin-btn btn-secondary" onclick="refreshFacilities()">Refresh List</button>
+                    </div>
+
+                    <!-- Add/Edit Form -->
+                    <div class="card hidden" id="facilityForm">
+                        <h3 style="color: #2e7d32; margin-bottom: 1rem;" id="formTitle">Add New Facility</h3>
+                        <div class="form-group">
+                            <label>Facility Name:</label>
+                            <input type="text" id="facilityName" placeholder="Enter facility name">
+                        </div>
+                        <div class="form-group">
+                            <label>Address:</label>
+                            <textarea id="facilityAddress" placeholder="Enter full address" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number:</label>
+                            <input type="tel" id="facilityPhone" placeholder="Enter phone number">
+                        </div>
+                        <div class="form-group">
+                            <label>Items Accepted:</label>
+                            <textarea id="facilityItems" placeholder="Enter accepted items (comma-separated)" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Latitude:</label>
+                            <input type="number" id="facilityLat" step="any" placeholder="Enter latitude">
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude:</label>
+                            <input type="number" id="facilityLng" step="any" placeholder="Enter longitude">
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button class="admin-btn btn-primary" onclick="saveFacility()">Save Facility</button>
+                            <button class="admin-btn btn-secondary" onclick="cancelEdit()">Cancel</button>
+                        </div>
+                        <div id="formStatus"></div>
+                    </div>
+
+                    <!-- Facilities List -->
+                    <div class="card">
+                        <h3 style="color: #2e7d32; margin-bottom: 1rem;">Registered Facilities</h3>
+                        <div class="facility-list" id="facilitiesList">
+                            <!-- Facilities will be listed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div>
+            <h4>EcoTrace Project</h4>
+            <p>Developed by: Team EcoWarriors | Built with HTML, CSS & JavaScript</p>
+            <p>© 2025 EcoTrace - Making E-Waste Management Sustainable</p>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables
+        let facilities = [
+            {
+                id: 1,
+                name: "Green Tech Recyclers",
+                address: "123 Eco Street, Green City, 110001",
+                phone: "+91 9876543210",
+                items: "Smartphones, Laptops, Tablets, Batteries",
+                lat: 28.6139,
+                lng: 77.2090
+            },
+            {
+                id: 2,
+                name: "E-Waste Solutions Hub",
+                address: "456 Recycle Lane, Tech Valley, 110002",
+                phone: "+91 8765432109",
+                items: "TVs, Monitors, Printers, Gaming Consoles",
+                lat: 28.7041,
+                lng: 77.1025
+            },
+            {
+                id: 3,
+                name: "Sustainable Electronics Center",
+                address: "789 Clean Avenue, Eco Park, 110003",
+                phone: "+91 7654321098",
+                items: "All Electronics, Cables, Chargers, Small Appliances",
+                lat: 28.5355,
+                lng: 77.3910
+            }
+        ];
+
+        let currentEditingId = null;
+        let isLoggedIn = false;
+
+        // Navigation functionality
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Update active nav link
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Close mobile menu
+            document.getElementById('navLinks').classList.remove('active');
+            document.getElementById('hamburger').classList.remove('active');
+        }
+
+        // Mobile menu toggle
+        document.getElementById('hamburger').addEventListener('click', function() {
+            this.classList.toggle('active');
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+
+        // Search functionality
+        function searchFacilities() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                showStatus('Please enter a location to search.', 'error');
+                return;
+            }
+
+            showStatus('Searching for facilities...', 'loading');
+            
+            // Simulate search delay
+            setTimeout(() => {
+                displayFacilities(facilities);
+                showStatus(`Found ${facilities.length} facilities near "${query}"`, 'success');
+            }, 1500);
+        }
+
+        // Geolocation functionality
+        function useMyLocation() {
+            if (!navigator.geolocation) {
+                showStatus('Geolocation is not supported by this browser.', 'error');
+                return;
+            }
+
+            showStatus('Getting your location...', 'loading');
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    showStatus(`Location found! Searching nearby facilities...`, 'loading');
+                    
+                    // Simulate location-based search
+                    setTimeout(() => {
+                        displayFacilities(facilities);
+                        showStatus(`Found ${facilities.length} facilities near your location`, 'success');
+                        document.getElementById('searchInput').value = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
+                    }, 1500);
+                },
+                (error) => {
+                    let message = 'Unable to retrieve your location. ';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            message += 'Location access denied by user.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            message += 'Location information unavailable.';
+                            break;
+                        case error.TIMEOUT:
+                            message += 'Location request timed out.';
+                            break;
+                    }
+                    showStatus(message, 'error');
+                }
+            );
+        }
+
+        // Display facilities
+        function displayFacilities(facilitiesData) {
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if (!facilitiesData || facilitiesData.length === 0) {
+                resultsContainer.innerHTML = '<div class="card"><p>No facilities found in your area. Please try a different location.</p></div>';
+                return;
+            }
+
+            resultsContainer.innerHTML = facilitiesData.map(facility => `
+                <div class="facility-card">
+                    <div class="facility-name">${facility.name}</div>
+                    <div class="facility-address">📍 ${facility.address}</div>
+                    <div class="facility-phone">📞 ${facility.phone}</div>
+                    <div class="facility-items">Items accepted: ${facility.items}</div>
+                    <button class="directions-btn" onclick="openDirections(${facility.lat}, ${facility.lng})">
+                        🗺️ Get Directions
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Open directions in Google Maps
+        function openDirections(lat, lng) {
+            const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+            window.open(url, '_blank');
+        }
+
+        // Show status messages
+        function showStatus(message, type) {
+            const statusElement = document.getElementById('searchStatus');
+            let className = '';
+            
+            switch(type) {
+                case 'error':
+                    className = 'error';
+                    break;
+                case 'success':
+                    className = 'success';
+                    break;
+                case 'loading':
+                    className = 'loading';
+                    break;
+                default:
+                    className = '';
+            }
+            
+            statusElement.innerHTML = `<div class="${className}">${message}</div>`;
+            
+            // Auto-hide success/error messages
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    statusElement.innerHTML = '';
+                }, 3000);
+            }
+        }
+
+        // Admin functionality
+        function adminLogin() {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            const statusElement = document.getElementById('loginStatus');
+
+            if (!username || !password) {
+                statusElement.innerHTML = '<div class="error">Please enter both username and password.</div>';
+                return;
+            }
+
+            // Simple demo login (in real app, this would be secure authentication)
+            if (username === 'admin' && password === 'ecotrace2025') {
+                isLoggedIn = true;
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                refreshFacilities();
+                statusElement.innerHTML = '';
+            } else {
+                statusElement.innerHTML = '<div class="error">Invalid username or password. Try: admin / ecotrace2025</div>';
+            }
+        }
+
+        function adminLogout() {
+            isLoggedIn = false;
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('adminUsername').value = '';
+            document.getElementById('adminPassword').value = '';
+            cancelEdit();
+        }
+
+        function showAddForm() {
+            document.getElementById('facilityForm').classList.remove('hidden');
+            document.getElementById('formTitle').textContent = 'Add New Facility';
+            currentEditingId = null;
+            clearForm();
+        }
+
+        function clearForm() {
+            document.getElementById('facilityName').value = '';
+            document.getElementById('facilityAddress').value = '';
+            document.getElementById('facilityPhone').value = '';
+            document.getElementById('facilityItems').value = '';
+            document.getElementById('facilityLat').value = '';
+            document.getElementById('facilityLng').value = '';
+            document.getElementById('formStatus').innerHTML = '';
+        }
+
+        function cancelEdit() {
+            document.getElementById('facilityForm').classList.add('hidden');
+            currentEditingId = null;
+            clearForm();
+        }
+
+        function saveFacility() {
+            const name = document.getElementById('facilityName').value.trim();
+            const address = document.getElementById('facilityAddress').value.trim();
+            const phone = document.getElementById('facilityPhone').value.trim();
+            const items = document.getElementById('facilityItems').value.trim();
+            const lat = parseFloat(document.getElementById('facilityLat').value);
+            const lng = parseFloat(document.getElementById('facilityLng').value);
+
+            const statusElement = document.getElementById('formStatus');
+
+            // Validation
+            if (!name || !address || !phone || !items || isNaN(lat) || isNaN(lng)) {
+                statusElement.innerHTML = '<div class="error">Please fill in all fields correctly.</div>';
+                return;
+            }
+
+            const facilityData = { name, address, phone, items, lat, lng };
+
+            if (currentEditingId) {
+                // Update existing facility
+                const index = facilities.findIndex(f => f.id === currentEditingId);
+                if (index !== -1) {
+                    facilities[index] = { ...facilityData, id: currentEditingId };
+                    statusElement.innerHTML = '<div class="success">Facility updated successfully!</div>';
+                }
+            } else {
+                // Add new facility
+                const newId = Math.max(...facilities.map(f => f.id)) + 1;
+                facilities.push({ ...facilityData, id: newId });
+                statusElement.innerHTML = '<div class="success">Facility added successfully!</div>';
+            }
+
+            setTimeout(() => {
+                cancelEdit();
+                refreshFacilities();
+            }, 1500);
+        }
+
+        function editFacility(id) {
+            const facility = facilities.find(f => f.id === id);
+            if (!facility) return;
+
+            currentEditingId = id;
+            document.getElementById('facilityForm').classList.remove('hidden');
+            document.getElementById('formTitle').textContent = 'Edit Facility';
+
+            document.getElementById('facilityName').value = facility.name;
+            document.getElementById('facilityAddress').value = facility.address;
+            document.getElementById('facilityPhone').value = facility.phone;
+            document.getElementById('facilityItems').value = facility.items;
+            document.getElementById('facilityLat').value = facility.lat;
+            document.getElementById('facilityLng').value = facility.lng;
+        }
+
+        function deleteFacility(id) {
+            if (confirm('Are you sure you want to delete this facility?')) {
+                facilities = facilities.filter(f => f.id !== id);
+                refreshFacilities();
+            }
+        }
+
+        function refreshFacilities() {
+            const listContainer = document.getElementById('facilitiesList');
+            
+            if (facilities.length === 0) {
+                listContainer.innerHTML = '<div class="card"><p>No facilities registered yet.</p></div>';
+                return;
+            }
+
+            listContainer.innerHTML = facilities.map(facility => `
+                <div class="facility-item">
+                    <div>
+                        <strong>${facility.name}</strong><br>
+                        <small>${facility.address} | ${facility.phone}</small>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="admin-btn btn-secondary" style="padding: 0.5rem;" onclick="editFacility(${facility.id})">Edit</button>
+                        <button class="admin-btn btn-danger" style="padding: 0.5rem;" onclick="deleteFacility(${facility.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add some initial demo data
+            displayFacilities(facilities);
+        });
+
+        // Search on Enter key
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchFacilities();
+            }
+        });
+    </script>
+</body>
+</html>
