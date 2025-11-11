@@ -1,0 +1,65 @@
+{% extends "core/base.html" %}
+
+{% block title %}Awareness - EcoTrace{% endblock %}
+
+{% block content %}
+<section class="section active" id="awareness">
+    <h2 class="section-title center">E-Waste Awareness</h2>
+    
+    <div class="awareness-grid">
+        <div class="awareness-card">
+            <h3 class="card-heading">🔋 Items to Recycle</h3>
+            <ul class="plain-list">
+                <li>📱 Mobile phones & tablets</li>
+                <li>💻 Computers & laptops</li>
+                <li>📺 TVs & monitors</li>
+                <li>🔌 Cables & chargers</li>
+                <li>🖨️ Printers & scanners</li>
+                <li>🎮 Gaming consoles</li>
+            </ul>
+        </div>
+
+        <div class="awareness-card">
+            <h3 class="card-heading">⚠️ Hazardous Materials</h3>
+            <p>Electronic devices contain hazardous substances that can cause serious environmental and health problems:</p>
+            <ul>
+                <li><strong>Lead:</strong> Damages nervous system</li>
+                <li><strong>Mercury:</strong> Toxic to brain and kidneys</li>
+                <li><strong>Cadmium:</strong> Causes kidney damage</li>
+                <li><strong>Chromium:</strong> Can cause cancer</li>
+                <li><strong>PVC plastics:</strong> Release toxic dioxins</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-number">54M</div>
+            <p>Tons of e-waste generated globally each year</p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">20%</div>
+            <p>Of e-waste is properly recycled worldwide</p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">$62B</div>
+            <p>Worth of materials in annual e-waste</p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">5.3B</div>
+            <p>Mobile phones discarded annually</p>
+        </div>
+    </div>
+
+    <div class="card mt-2">
+        <h3 class="card-heading">📋 Before You Recycle</h3>
+        <ul>
+            <li><strong>Backup your data:</strong> Save important files and photos</li>
+            <li><strong>Remove personal information:</strong> Factory reset devices</li>
+            <li><strong>Remove batteries:</strong> Take out removable batteries</li>
+            <li><strong>Find certified recyclers:</strong> Use only authorized e-waste facilities</li>
+            <li><strong>Get a certificate:</strong> Request proof of proper disposal</li>
+        </ul>
+    </div>
+</section>
+{% endblock %}

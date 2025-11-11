@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}EcoTrace - E-Waste Facility Locator{% endblock %}</title>
+
+    <!-- Leaflet CSS (library) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Single CSS file (your custom styles should come after library CSS so they can override) -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="{% url 'home' %}" class="logo">
+            <div class="logo-icon">🌱</div>
+            EcoTrace</a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'locator' %}">Find Facility</a></li>
+                <li><a href="{% url 'awareness' %}">Awareness</a></li>
+                <li><a href="{% url 'admin:index' %}">Admin</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div>
+            <h4>EcoTrace Project</h4>
+            <p>Developed by: Team EcoWarriors | Built with HTML, CSS & JavaScript</p>
+            <p>© 2025 EcoTrace - Making E-Waste Management Sustainable</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- Leaflet JS (load once globally so page templates don't need to include it again) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

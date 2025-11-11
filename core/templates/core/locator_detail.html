@@ -1,0 +1,41 @@
+{% extends "core/base.html" %}
+
+{% block title %}{{ loc.name }}{% endblock %}
+
+{% block content %}
+<section class="section active" id="locator-detail">
+  <div class="detail-card">
+    <h3>{{ loc.name }}</h3>
+    <p><strong>Address:</strong> {{ loc.address }}</p>
+    <p><strong>City/State:</strong> {{ loc.city }}, {{ loc.state }}</p>
+    <p><strong>Accepted:</strong> {{ loc.accepted_items }}</p>
+    <p><strong>Timings:</strong> {{ loc.timings }}</p>
+    <p><strong>Contact:</strong> {{ loc.contact }}</p>
+    <a href="{% url 'locator' %}" class="btn btn-secondary">⬅ Back</a>
+  </div>
+
+  <div class="map-wrapper" style="margin-top:1rem;">
+    <div id="map-single" style="height:350px;"></div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-sA+e2/4q6tM7u3eQn0G6iKk3Xl4w7Vv2QZ1ZC2Zrjv0=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-o9N1j7k2bP2Q2PjDq4KJ2z8R3s0y6z3m1b7mG1Z1jzI=" crossorigin=""></script>
+
+<script>
+  // Initialize a single-location map
+  const lat = parseFloat("{{ loc.latitude|floatformat:6 }}");
+  const lng = parseFloat("{{ loc.longitude|floatformat:6 }}");
+  const mapSingle = L.map('map-single').setView([lat, lng], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+  }).addTo(mapSingle);
+  setTimeout(()=>{ mapSingle.invalidateSize(); }, 200);
+  L.marker([lat, lng]).addTo(mapSingle).bindPopup("{{ loc.name }}").openPopup();
+</script>
+{% endblock %}

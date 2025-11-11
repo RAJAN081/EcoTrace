@@ -1,0 +1,31 @@
+{% extends "core/base.html" %}
+
+{% block title %}Home - EcoTrace{% endblock %}
+
+{% block content %}
+<section class="section active" id="home">
+    <div class="hero">
+        <h1>EcoTrace</h1>
+        <p class="tagline">"Locate. Recycle. Sustain."</p>
+        <button class="cta-button" onclick="showSection('locator')"><a href="{% url 'locator' %}">Find Facility</a></button>
+    </div>
+
+    <div class="info-cards">
+        <div class="card">
+            <div class="card-icon">♻️</div>
+            <h3>Why Recycle E-Waste?</h3>
+            <p>Electronic waste contains toxic materials like lead, mercury, and cadmium that can harm the environment and human health when improperly disposed of. Recycling e-waste recovers valuable materials and prevents pollution.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🌍</div>
+            <h3>Environmental Impact</h3>
+            <p>Only 20% of global e-waste is formally recycled. The rest ends up in landfills or is illegally dumped, causing soil and water contamination. Proper recycling can recover 95% of materials in electronics.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">💎</div>
+            <h3>Valuable Resources</h3>
+            <p>E-waste contains precious metals like gold, silver, and platinum. One ton of mobile phones contains more gold than one ton of gold ore! Recycling helps recover these valuable resources.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

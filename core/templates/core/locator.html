@@ -1,0 +1,135 @@
+{% extends "core/base.html" %}
+
+{% block title %}Find Facility - EcoTrace{% endblock %}
+
+{% block content %}
+<section class="section active" id="locator">
+  <h2 class="section-title center">Find E-Waste Recycling Facilities</h2>
+  <div class="locator-container">
+    <div class="map-wrapper">
+      <div id="map"></div>
+    </div>
+    <div class="sidebar">
+      <h5>Search</h5>
+      <input id="searchInput" class="form-control" placeholder="Enter name, city or address">
+      <button id="btnSearch" class="btn btn-primary mt-2">Search</button>
+      <hr>
+      <h5>Facilities</h5>
+      <ul id="locationList" class="list-group"></ul>
+    </div>
+  </div>
+
+  <section class="section" id="locator-detail">
+    <div id="detail-card" class="detail-card" style="margin-top:1rem;">
+      <p>Select a facility on the map or from the list to see details here.</p>
+    </div>
+  </section>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<!-- Leaflet CSS & JS (kept inside this template to avoid changing global base.html) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-sA+e2/4q6tM7u3eQn0G6iKk3Xl4w7Vv2QZ1ZC2Zrjv0=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-o9N1j7k2bP2Q2PjDq4KJ2z8R3s0y6z3m1b7mG1Z1jzI=" crossorigin=""></script>
+
+<script>
+  // Initialize map
+  const map = L.map('map').setView([20.5937, 78.9629], 5); // Center on India
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+  // sometimes map container is hidden initially (tabbed UI); force invalidate after a short delay
+  setTimeout(()=>{ map.invalidateSize(); }, 250);
+
+  const apiUrl = "{% url 'api_locations' %}";
+  // Build a base detail URL by using the Django reverse for locator_detail with a dummy id (0),
+  // then removing the trailing "0/" so we can append the real id client-side.
+  let detailUrlBase = "{% url 'locator_detail' 0 %}";
+  if (detailUrlBase.endsWith('0/')) {
+      detailUrlBase = detailUrlBase.slice(0, -2); // remove '0/'
+  }
+
+  let locationsData = [];
+
+  // Utility to create a detail HTML block
+  function renderDetail(loc) {
+      return `
+        <h3>${loc.name}</h3>
+        <p><strong>Address:</strong> ${loc.address}</p>
+        <p><strong>City/State:</strong> ${loc.city}, ${loc.state}</p>
+        <p><strong>Accepted:</strong> ${loc.accepted_items}</p>
+        <p><strong>Timings:</strong> ${loc.timings}</p>
+        <p><strong>Contact:</strong> ${loc.contact}</p>
+        <a href="${detailUrlBase}${loc.id}/" class="btn btn-secondary">View full page</a>
+      `;
+  }
+
+  // Fetch locations and add markers + list items
+  fetch(apiUrl)
+    .then(r => r.json())
+    .then(data => {
+      locationsData = data;
+      const list = document.getElementById('locationList');
+      data.forEach(loc => {
+        const lat = parseFloat(loc.lat);
+        const lng = parseFloat(loc.lng);
+        if (isNaN(lat) || isNaN(lng)) return;
+
+        const marker = L.marker([lat, lng]).addTo(map);
+        // Bind popup with brief info + link to full page
+        marker.bindPopup(`<b>${loc.name}</b><br>${loc.address}<br><a href="${detailUrlBase}${loc.id}/">Details</a>`);
+
+        // Create list item
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.innerHTML = `<strong>${loc.name}</strong><br><small>${loc.address}</small>`;
+        li.addEventListener('click', () => {
+            map.setView([lat, lng], 14);
+            marker.openPopup();
+            document.getElementById('detail-card').innerHTML = renderDetail(loc);
+            // scroll detail into view on small screens
+            document.getElementById('detail-card').scrollIntoView({behavior: 'smooth'});
+        });
+        list.appendChild(li);
+
+        // Also open detail when marker clicked
+        marker.on('click', () => {
+            document.getElementById('detail-card').innerHTML = renderDetail(loc);
+        });
+      });
+    })
+    .catch(err => {
+      console.error("Error loading locations:", err);
+    });
+
+  // Simple client-side search that filters the list and recenters the map
+  document.getElementById('btnSearch').addEventListener('click', () => {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (!q) return;
+      // find first match by name, city or address
+      const found = locationsData.find(l => (
+          (l.name || '').toLowerCase().includes(q) ||
+          (l.city || '').toLowerCase().includes(q) ||
+          (l.address || '').toLowerCase().includes(q)
+      ));
+      if (found) {
+          map.setView([parseFloat(found.lat), parseFloat(found.lng)], 13);
+          // open popup for that marker by finding it among map layers (simple approach)
+          map.eachLayer(layer => {
+              if (layer instanceof L.Marker) {
+                  const ll = layer.getLatLng();
+                  if (Math.abs(ll.lat - parseFloat(found.lat)) < 0.00001 && Math.abs(ll.lng - parseFloat(found.lng)) < 0.00001) {
+                      layer.openPopup();
+                  }
+              }
+          });
+          document.getElementById('detail-card').innerHTML = renderDetail(found);
+      } else {
+          alert("No facility found for: " + q);
+      }
+  });
+</script>
+{% endblock %}
